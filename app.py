@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware  # Import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
-import random
 from typing import List, Dict
 from pydantic import BaseModel
 
@@ -46,11 +45,17 @@ tasks = [
 # Task assignments: Maps student ID to task ID
 task_assignments: Dict[int, int] = {}
 
-# Function to assign tasks randomly
+# Track the last assigned task index
+last_assigned_task_index = -1
+
+# Function to assign tasks sequentially
 def assign_tasks():
-    global task_assignments
-    random.shuffle(tasks)  # Shuffle tasks to ensure random assignment
-    task_assignments = {student.id: task.id for student, task in zip(students, tasks)}
+    global task_assignments, last_assigned_task_index
+    for student in students:
+        # Increment the task index (cycle back to 0 if it exceeds the list length)
+        last_assigned_task_index = (last_assigned_task_index + 1) % len(tasks)
+        # Assign the next task to the student
+        task_assignments[student.id] = tasks[last_assigned_task_index].id
 
 # Function to check if it's Saturday
 def is_saturday():

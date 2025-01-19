@@ -10,7 +10,7 @@ app = FastAPI()
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","https://task-frontend-flame.vercel.app/"],  # Allow requests from this origin
+    allow_origins=["http://localhost:5173", "https://task-frontend-flame.vercel.app"],  # Allow requests from these origins
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers

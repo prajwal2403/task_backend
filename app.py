@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 from typing import List, Dict
 from pydantic import BaseModel
+import asyncio
 
 app = FastAPI()
 
@@ -64,12 +65,19 @@ def is_saturday():
 # Initialize task assignments
 assign_tasks()
 
-# Background task to update tasks every Saturday
+# Background task to check for Saturdays and update tasks
+async def check_saturday_and_update_tasks():
+    while True:
+        if is_saturday():
+            assign_tasks()
+            print("Tasks updated because it's Saturday!")
+        # Sleep for 24 hours before checking again
+        await asyncio.sleep(86400)  # 86400 seconds = 24 hours
+
+# Start the background task when the application starts
 @app.on_event("startup")
 async def startup_event():
-    # Check if it's Saturday and update tasks if necessary
-    if is_saturday():
-        assign_tasks()
+    asyncio.create_task(check_saturday_and_update_tasks())
 
 # Endpoint to get current task assignments
 @app.get("/tasks", response_model=Dict[str, str])

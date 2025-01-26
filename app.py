@@ -99,7 +99,7 @@ async def get_tasks():
 # Endpoint to manually trigger task update
 @app.post("/update-tasks")
 async def update_tasks():
-    assign_tasks()
+    assign_tasks()  # Manually reassign tasks without checking for Saturday
     return {"message": "Tasks updated successfully!"}
 
 # Endpoint to add a new student

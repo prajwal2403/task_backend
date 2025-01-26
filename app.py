@@ -4,6 +4,11 @@ from datetime import datetime, timedelta
 from typing import List, Dict
 from pydantic import BaseModel
 import asyncio
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -52,11 +57,14 @@ last_assigned_task_index = -1
 # Function to assign tasks sequentially
 def assign_tasks():
     global task_assignments, last_assigned_task_index
+    logger.info("Assigning tasks...")
     for student in students:
         # Increment the task index (cycle back to 0 if it exceeds the list length)
         last_assigned_task_index = (last_assigned_task_index + 1) % len(tasks)
         # Assign the next task to the student
         task_assignments[student.id] = tasks[last_assigned_task_index].id
+        logger.info(f"Assigned {tasks[last_assigned_task_index].name} to {student.name}")
+    logger.info(f"Updated task assignments: {task_assignments}")
 
 # Function to check if it's Saturday
 def is_saturday():
@@ -70,7 +78,7 @@ async def check_saturday_and_update_tasks():
     while True:
         if is_saturday():
             assign_tasks()
-            print("Tasks updated because it's Saturday!")
+            logger.info("Tasks updated because it's Saturday!")
         # Sleep for 24 hours before checking again
         await asyncio.sleep(86400)  # 86400 seconds = 24 hours
 

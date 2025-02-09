@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 
 # Load environment variables
 API_KEY = os.getenv("API_KEY", "prajwal2403")  # Change this or set it in environment variables
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "https://task-frontend-flame.vercel.app/").split(",")  # Allow all origins by default
+ALLOWED_ORIGINS = [
+    "https://task-frontend-flame.vercel.app",  # Your Vercel frontend URL
+    "http://localhost:5173",  # Local development URL
+    "http://localhost:3000"   # Another common local development port
+]  # Allow all origins by default
 
 app = FastAPI(title="Roommate Task Distribution",
              description="API for managing and distributing household tasks among roommates")
@@ -25,8 +29,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
-
 # Define data models
 class Roommate(BaseModel):
     id: int
